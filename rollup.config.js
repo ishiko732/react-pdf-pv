@@ -2,10 +2,8 @@ import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
 import dts from "rollup-plugin-dts";
-
-// To handle css files
 import postcss from "rollup-plugin-postcss";
-
+import babel from "@rollup/plugin-babel";
 import terser from "@rollup/plugin-terser";
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import image from '@rollup/plugin-image';
@@ -32,8 +30,20 @@ export default [
             resolve(),
             commonjs(),
             typescript({tsconfig: "./tsconfig.json"}),
-            postcss(),
-
+            postcss({
+                config: {
+                    path: "./postcss.config.js",
+                },
+                extensions: [".css"],
+                minimize: true,
+                inject: {
+                    insertAt: "top",
+                },
+            }),
+            babel({
+                babelHelpers: "bundled",
+                exclude: "node_modules/**",
+            }),
             terser(),
             image()
         ],
@@ -43,6 +53,6 @@ export default [
         output: [{file: "dist/index.d.ts", format: "esm"}],
         plugins: [dts()],
 
-        external: [/\.css$/], // telling rollup anything that is .css aren't part of type exports
+        external: ["react", "react-dom"],
     },
 ]
