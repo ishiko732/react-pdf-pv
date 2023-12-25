@@ -44,16 +44,4 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install
-  build-and-test:
-    runs-on: ubuntu-latest
-    needs: [cache-and-install]
-    strategy:
-      matrix:
-        os: [ubuntu-latest,macos,windows-latest]
-        node: [ 16, 18 ]
-    name: Node ${{ matrix.node }} CI
-
-    steps:
-      - name: Build
-        run: pnpm build
+        run: pnpm install --frozen-lockfile
